@@ -23,7 +23,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var factors = await db.Factor.ToListAsync();
+                var factors = await db.Factors.ToListAsync();
                 return (factors);
 
             }
@@ -43,7 +43,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Factor.Add(p);
+                db.Factors.Add(p);
                 await db.SaveChangesAsync();
                 return new
                 {
@@ -68,7 +68,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var factor = await db.Factor.FirstOrDefaultAsync(a => a.Id == id);
+                var factor = await db.Factors.FirstOrDefaultAsync(a => a.Id == id);
                 return new
                 {
                     status = "success",
@@ -94,7 +94,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var factor = await db.Factor.Where(s => s.Date.Contains(a)).ToListAsync();
+                var factor = await db.Factors.Where(s => s.Date.Contains(a)).ToListAsync();
                 return new
                 {
                     status = "success",
@@ -118,8 +118,8 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Factor factor = await db.Factor.FirstOrDefaultAsync(p => p.Id == id);
-                db.Factor.Remove(factor);
+                Factor factor = await db.Factors.FirstOrDefaultAsync(p => p.Id == id);
+                db.Factors.Remove(factor);
                 await db.SaveChangesAsync();
                 return new
                 {

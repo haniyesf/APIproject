@@ -15,10 +15,10 @@ namespace ProductsAPI.Models
 
 
         public DbSet<ProductDetail> ProductDetails { get; set; }
-        public DbSet<Factor> Factor { get; set; }
-        public DbSet<Customer> Customer { get; set; }
-        public DbSet<Vendor> Vendor { get; set; }
-        public DbSet<Region> Region { get; set; }
+        public DbSet<Factor> Factors { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Region> Regions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

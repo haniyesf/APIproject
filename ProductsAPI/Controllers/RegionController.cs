@@ -23,7 +23,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var Region = await db.Region.ToListAsync();
+                var Region = await db.Regions.ToListAsync();
                 return (Region);
 
             }
@@ -43,7 +43,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Region.Add(p);
+                db.Regions.Add(p);
                 await db.SaveChangesAsync();
                 return new
                 {
@@ -67,8 +67,8 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Region Region = await db.Region.FirstOrDefaultAsync(p => p.Id == ID);
-                db.Region.Remove(Region);
+                Region Region = await db.Regions.FirstOrDefaultAsync(p => p.Id == ID);
+                db.Regions.Remove(Region);
                 await db.SaveChangesAsync();
                 return new
                 {
@@ -122,7 +122,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var Region = await db.Region.Where(s => s.Name.Contains(q)).ToListAsync();
+                var Region = await db.Regions.Where(s => s.Name.Contains(q)).ToListAsync();
                 return new
                 {
                     status = "success",
@@ -146,7 +146,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Region Region = await db.Region.FirstOrDefaultAsync(p => p.Id == id);
+                Region Region = await db.Regions.FirstOrDefaultAsync(p => p.Id == id);
                
 
                 return new

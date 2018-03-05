@@ -24,7 +24,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var vendor = await db.Vendor.ToListAsync();
+                var vendor = await db.Vendors.ToListAsync();
                 return (vendor);
 
             }
@@ -44,7 +44,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Vendor.Add(v);
+                db.Vendors.Add(v);
                 await db.SaveChangesAsync();
                 return new
                 {
@@ -68,8 +68,8 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Vendor vendor = await db.Vendor.FirstOrDefaultAsync(p => p.Id == id);
-                db.Vendor.Remove(vendor);
+                Vendor vendor = await db.Vendors.FirstOrDefaultAsync(p => p.Id == id);
+                db.Vendors.Remove(vendor);
                 await db.SaveChangesAsync();
                 return new
                 {
@@ -122,7 +122,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var vendor = await db.Vendor.Where(s => s.Name.Contains(d)).ToListAsync();
+                var vendor = await db.Vendors.Where(s => s.Name.Contains(d)).ToListAsync();
                 return new
                 {
                     status = "success",
@@ -150,7 +150,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Vendor vendor = await db.Vendor.FirstOrDefaultAsync(p => p.Id == id);
+                Vendor vendor = await db.Vendors.FirstOrDefaultAsync(p => p.Id == id);
                
                 return new
                 {
