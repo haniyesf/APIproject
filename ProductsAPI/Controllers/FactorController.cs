@@ -15,7 +15,13 @@ namespace ProductsAPI.Controllers
 {
     public class FactorController : ApiController
     {
-        private AllContext db = new AllContext();
+        protected Repositories.FactorRepository Repository { get; private set; }
+
+        public FactorController()
+        {
+            Repository = new Repositories.FactorRepository();
+        }
+
 
         [HttpGet]
         [Route("factors")]
@@ -23,18 +29,23 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var factors = await db.Factors.ToListAsync();
-                return (factors);
-
+                var factors = await this.Repository.GetAll();
+                return new
+                {
+                    status = "success",
+                    result = factors
+                };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
+
+
         }
 
         [HttpPost]
@@ -43,19 +54,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Factors.Add(p);
-                await db.SaveChangesAsync();
+                await this.Repository.Insert(p);
                 return new
                 {
                     status = "Success",
-                    message = "One factor Inserted."
+                    result = "One Vendor Inserted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -68,22 +78,22 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var factor = await db.Factors.FirstOrDefaultAsync(a => a.Id == id);
+                var factor = await this.Repository.Find(id);
                 return new
                 {
-                    status = "success",
+                    status = "Success",
                     result = factor
                 };
             }
-
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
+
 
         }
 
@@ -92,23 +102,25 @@ namespace ProductsAPI.Controllers
         [Route("factors/search/{a}")]
         public async Task<dynamic> SearchFactor(string a)
         {
+
             try
             {
-                var factor = await db.Factors.Where(s => s.Date.Contains(a)).ToListAsync();
+                var factor = await this.Repository.Find(a);
                 return new
                 {
                     status = "success",
                     result = factor
                 };
-
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
+
                 };
+
             }
         }
 
@@ -118,50 +130,51 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Factor factor = await db.Factors.FirstOrDefaultAsync(p => p.Id == id);
-                db.Factors.Remove(factor);
-                await db.SaveChangesAsync();
+                await this.Repository.Delete(id);
                 return new
                 {
                     status = "Success",
-                    message = "One Factor Deleted."
+                    message = "One factor Deleted."
                 };
-
-
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
+
                 };
             }
         }
 
         [HttpPut]
         [Route("factors/{id}")]
-        public async Task<dynamic> EdieFactor(Factor factor)
+        public async Task<dynamic> EdieFactor(Factor factor, int id)
         {
             try
             {
-                db.Entry(factor).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-
+                var origin = await this.Repository.Find(id);
+                if (origin != null)
+                {
+                    origin.Date = factor.Date ?? origin.Date;
+                }
+                await this.Repository.Update(origin);
                 return new
                 {
                     status = "Success",
-                    message = "One Factor updated."
+                    result = "One factor updated."
                 };
-
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
+
                 };
+
             }
         }
     }

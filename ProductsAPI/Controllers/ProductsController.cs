@@ -15,23 +15,33 @@ namespace ProductsAPI.Controllers
 {
     public class ProductsController : ApiController
     {
-        private AllContext db = new AllContext();
-        
+        protected Repositories.ProductRepository Repository { get; private set; }
+
+
+        public ProductsController()
+        {
+            this.Repository = new Repositories.ProductRepository();
+        }
+
+
         [HttpGet]
         [Route("products")]
         public async Task<dynamic> GetProducts()
         {
             try
             {
-                var model = await db.ProductDetails.ToListAsync();
-                return (model);
-
+                var Product = await this.Repository.GetAll();
+                return new
+                {
+                    status = "success",
+                    result = Product
+                };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -39,23 +49,22 @@ namespace ProductsAPI.Controllers
         
         [HttpPost]
         [Route("products")]
-        public async Task<dynamic> AddProduct(ProductDetail p)
+        public async Task<dynamic> AddProduct(ProductDetail a)
         {
             try
             {
-                db.ProductDetails.Add(p);
-                await db.SaveChangesAsync();
+                await this.Repository.Insert(a);
                 return new
                 {
                     status = "Success",
-                    message = "One Product Inserted."
+                    result = "One Product Inserted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -67,20 +76,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                ProductDetail product = await db.ProductDetails.FirstOrDefaultAsync(p=>p.ID ==ID);
-                db.ProductDetails.Remove(product);
-                await db.SaveChangesAsync();
+                await this.Repository.Delete(ID);
                 return new
                 {
                     status = "Success",
-                    message = "One Product Deleted."
+                    result = "One Product Deleted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -89,24 +96,30 @@ namespace ProductsAPI.Controllers
 
         [HttpPut]
         [Route("products/{id}")]
-        public async Task<dynamic> EditProducts(ProductDetail productdetails)
+        public async Task<dynamic> EditProducts(ProductDetail productdetails,int id)
         {
             try
             {
-                db.Entry(productdetails).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-
+                var origin = await this.Repository.Find(id);
+                if (origin != null)
+                {
+                    origin.Name = productdetails.Name ?? origin.Name;
+                    origin.Address = productdetails.Address ?? origin.Address;
+                    origin.type = productdetails.type ?? origin.type;
+                    origin.price = productdetails.price ?? origin.price;
+                }
+                await this.Repository.Update(origin);
                 return new
                 {
                     status = "Success",
-                    message = "One Product updated."
+                    result = "One productd updated."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -122,18 +135,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var product = await db.ProductDetails.Where(s => s.Name.Contains(q)).ToListAsync();
+                var Product = await this.Repository.Find(q);
                 return new
                 {
                     status = "success",
-                    result = product
+                    result = Product
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -146,20 +159,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                ProductDetail productdetail = await db.ProductDetails.FirstOrDefaultAsync(p => p.ID == id);
-                //throw new Exception("test");
-
+                var Product = await this.Repository.Find(id);
                 return new
                 {
                     status = "Success",
-                    result = productdetail
+                    result = Product
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }

@@ -10,7 +10,7 @@ namespace ProductsAPI.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public string type { get; set; }
-        public int price { get; set; }
+        public string price { get; set; }
         public string Address { get; set; }
 
 

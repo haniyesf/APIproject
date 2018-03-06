@@ -15,7 +15,13 @@ namespace ProductsAPI.Controllers
 {
     public class VendorController : ApiController
     {
-        private AllContext db = new AllContext();
+        protected Repositories.VendorRepository Repository { get; private set; }
+
+
+        public VendorController()
+        {
+            this.Repository = new Repositories.VendorRepository();
+        }
 
 
         [HttpGet]
@@ -24,15 +30,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var vendor = await db.Vendors.ToListAsync();
-                return (vendor);
-
+                var vendor = await this.Repository.GetAll();
+                return new
+                {
+                    status = "success",
+                    result = vendor
+                };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -44,19 +53,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Vendors.Add(v);
-                await db.SaveChangesAsync();
+               await this.Repository.Insert(v);
                 return new
                 {
                     status = "Success",
-                    message = "One Vendor Inserted."
+                    result = "One Vendor Inserted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -68,20 +76,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Vendor vendor = await db.Vendors.FirstOrDefaultAsync(p => p.Id == id);
-                db.Vendors.Remove(vendor);
-                await db.SaveChangesAsync();
+               await this.Repository.Delete(id);
                 return new
                 {
                     status = "Success",
-                    message = "One Vendor Deleted."
+                    result = "One Vendor Deleted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -90,24 +96,29 @@ namespace ProductsAPI.Controllers
 
         [HttpPut]
         [Route("vendors/{id}")]
-        public async Task<dynamic> EditVendor(Vendor vendor)
+        public async Task<dynamic> EditVendor(Vendor vendor,int id)
         {
             try
             {
-                db.Entry(vendor).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-
+                var origin = await this.Repository.Find(id);
+                if (origin != null)
+                {
+                    origin.Name = vendor.Name ?? origin.Name;
+                    origin.Address = vendor.Address ?? origin.Address;
+                    origin.Tel = vendor.Tel ?? origin.Tel;
+                }
+                await this.Repository.Update(origin);
                 return new
                 {
                     status = "Success",
-                    message = "One Vendor updated."
+                    result = "One vendor updated."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -122,7 +133,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var vendor = await db.Vendors.Where(s => s.Name.Contains(d)).ToListAsync();
+               var vendor= await this.Repository.Find(d);
                 return new
                 {
                     status = "success",
@@ -133,7 +144,7 @@ namespace ProductsAPI.Controllers
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -150,8 +161,7 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Vendor vendor = await db.Vendors.FirstOrDefaultAsync(p => p.Id == id);
-               
+                var vendor = await this.Repository.Find(id);
                 return new
                 {
                     status = "Success",
@@ -162,7 +172,7 @@ namespace ProductsAPI.Controllers
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }

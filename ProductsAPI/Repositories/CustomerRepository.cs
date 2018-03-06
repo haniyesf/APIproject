@@ -10,6 +10,7 @@ namespace ProductsAPI.Repositories
 {
   public class CustomerRepository
   {
+
     private Models.AllContext db;
 
     public CustomerRepository()

@@ -62,7 +62,7 @@ namespace ProductsAPI.Controllers
       {
         return new
         {
-          status = "faile",
+          status = "failed",
           result = ex.Message
         };
       }
@@ -87,7 +87,7 @@ namespace ProductsAPI.Controllers
       {
         return new
         {
-          status = "faile",
+          status = "failed",
           result = ex.Message
         };
       }
@@ -111,7 +111,7 @@ namespace ProductsAPI.Controllers
       {
         return new
         {
-          status = "faile",
+          status = "failed",
           result = ex.Message
         };
       }
@@ -130,14 +130,14 @@ namespace ProductsAPI.Controllers
         return new
         {
           status = "success",
-          message = "One Customer Deleted"
+          result = "One Customer Deleted"
         };
       }
       catch (Exception ex)
       {
         return new
         {
-          status = "faile",
+          status = "failed",
           result = ex.Message
 
         };
@@ -163,14 +163,14 @@ namespace ProductsAPI.Controllers
         return new
         {
           status = "Success",
-          message = "One Customer updated."
+          result = "One Customer updated."
         };
       }
       catch (Exception ex)
       {
         return new
         {
-          status = "faile",
+          status = "failed",
           result = ex.Message
         };
       }

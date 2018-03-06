@@ -15,7 +15,13 @@ namespace ProductsAPI.Controllers
 {
     public class RegionController : ApiController
     {
-        private AllContext db = new AllContext();
+        protected Repositories.RegionRepository Repository { get; private set; }
+
+
+        public RegionController()
+        {
+            this.Repository = new Repositories.RegionRepository();
+        }
 
         [HttpGet]
         [Route("regions")]
@@ -23,15 +29,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var Region = await db.Regions.ToListAsync();
-                return (Region);
-
+                var Region = await this.Repository.GetAll();
+                return new
+                {
+                    status = "success",
+                    result = Region
+                };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -43,19 +52,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                db.Regions.Add(p);
-                await db.SaveChangesAsync();
+                await this.Repository.Insert(p);
                 return new
                 {
                     status = "Success",
-                    message = "One Region Inserted."
+                    result = "One Region Inserted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
@@ -67,20 +75,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Region Region = await db.Regions.FirstOrDefaultAsync(p => p.Id == ID);
-                db.Regions.Remove(Region);
-                await db.SaveChangesAsync();
+                await this.Repository.Delete(ID);
                 return new
                 {
                     status = "Success",
-                    message = "One Region Deleted."
+                    result = "One Region Deleted."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -89,29 +95,34 @@ namespace ProductsAPI.Controllers
 
         [HttpPut]
         [Route("regions/{id}")]
-        public async Task<dynamic> EditRegion(Region Region)
+        public async Task<dynamic> EditRegion(Region Region ,int id)
         {
+
             try
             {
-                db.Entry(Region).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-
+                var origin = await this.Repository.Find(id);
+                if (origin != null)
+                {
+                    origin.Name = Region.Name ?? origin.Name;
+                }
+                await this.Repository.Update(origin);
                 return new
                 {
                     status = "Success",
-                    message = "One Region updated."
+                    result = "One Region updated."
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
 
             }
+       
         }
 
 
@@ -122,18 +133,18 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                var Region = await db.Regions.Where(s => s.Name.Contains(q)).ToListAsync();
+                var region = await this.Repository.Find(q);
                 return new
                 {
                     status = "success",
-                    result = Region
+                    result = region
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
 
                 };
@@ -146,24 +157,21 @@ namespace ProductsAPI.Controllers
         {
             try
             {
-                Region Region = await db.Regions.FirstOrDefaultAsync(p => p.Id == id);
-               
-
+                var region = await this.Repository.Find(id);
                 return new
                 {
                     status = "Success",
-                    result = Region
+                    result = region
                 };
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    status = "fail",
+                    status = "failed",
                     result = ex.Message
                 };
             }
-
         }
 
 
