@@ -10,12 +10,22 @@ using System.Threading.Tasks;
 using ProductsAPI.Models;
 using System.Web.Http;
 using System.Runtime.InteropServices;
+using System.Web.Http.Filters;
+using System.Threading;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
 
 namespace ProductsAPI.Controllers
 {
     public class ProductsController : ApiController
     {
-        protected Repositories.ProductRepository Repository { get; private set; }
+        protected Repositories.IProductRepository Repository { get; private set; }
+
+        public ProductsController(Repositories.IProductRepository repository)
+        {
+            this.Repository = repository;
+        }
 
 
         public ProductsController()
@@ -24,17 +34,26 @@ namespace ProductsAPI.Controllers
         }
 
 
+
+
         [HttpGet]
+        [Authorize]
         [Route("products")]
         public async Task<dynamic> GetProducts()
         {
             try
             {
+                var userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(new IdentityContext()));
+                var role = User.IsInRole("Administrator");
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
+                var roles = (await userManager.GetRolesAsync(user.Id)).ToArray();
+
                 var Product = await this.Repository.GetAll();
                 return new
                 {
                     status = "success",
-                    result = Product
+                    result = roles,
+                    userName = User.Identity.Name
                 };
             }
             catch (Exception ex)
@@ -46,7 +65,7 @@ namespace ProductsAPI.Controllers
                 };
             }
         }
-        
+
         [HttpPost]
         [Route("products")]
         public async Task<dynamic> AddProduct(ProductDetail a)
@@ -96,7 +115,7 @@ namespace ProductsAPI.Controllers
 
         [HttpPut]
         [Route("products/{id}")]
-        public async Task<dynamic> EditProducts(ProductDetail productdetails,int id)
+        public async Task<dynamic> EditProducts(ProductDetail productdetails, int id)
         {
             try
             {

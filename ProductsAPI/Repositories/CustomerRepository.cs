@@ -8,8 +8,8 @@ using System.Web;
 
 namespace ProductsAPI.Repositories
 {
-  public class CustomerRepository
-  {
+  public class CustomerRepository : ICustomerRepository
+    {
 
     private Models.AllContext db;
 

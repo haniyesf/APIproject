@@ -15,7 +15,12 @@ namespace ProductsAPI.Controllers
 {
     public class FactorController : ApiController
     {
-        protected Repositories.FactorRepository Repository { get; private set; }
+        protected Repositories.IFactorRepository Repository { get; private set; }
+
+        public FactorController(Repositories.IFactorRepository repository)
+        {
+            this.Repository = repository;
+        }
 
         public FactorController()
         {
@@ -25,6 +30,7 @@ namespace ProductsAPI.Controllers
 
         [HttpGet]
         [Route("factors")]
+        [Authorize(Roles = "User")]
         public async Task<dynamic> Getfactor()
         {
             try

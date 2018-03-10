@@ -8,7 +8,7 @@ using System.Web;
 
 namespace ProductsAPI.Repositories
 {
-    public class FactorRepository
+    public class FactorRepository : IFactorRepository
     {
         private Models.AllContext db;
         public FactorRepository()

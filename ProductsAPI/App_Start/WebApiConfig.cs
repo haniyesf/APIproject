@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -22,12 +23,15 @@ namespace ProductsAPI
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            jsonFormatter.SupportedEncodings.Clear();
-            jsonFormatter.SupportedEncodings.Add(UTF8Encoding.UTF8);
+            //var jsonFormatter = new JsonMediaTypeFormatter();
+            //jsonFormatter.SupportedEncodings.Clear();
+            //jsonFormatter.SupportedEncodings.Add(UTF8Encoding.UTF8);
 
-            config.Formatters.Clear();
-            config.Formatters.Add(jsonFormatter);
+            //config.Formatters.Clear();
+            //config.Formatters.Add(jsonFormatter);
+
+            var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Web;
 
 namespace ProductsAPI.Repositories
 {
-    public class ProductRepository
+    public class ProductRepository : IProductRepository
     {
         private AllContext db;
 

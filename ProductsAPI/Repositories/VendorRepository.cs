@@ -8,7 +8,7 @@ using System.Web;
 
 namespace ProductsAPI.Repositories
 {
-    public class VendorRepository
+    public class VendorRepository : IVendorRepository
     {
 
         private Models.AllContext db;

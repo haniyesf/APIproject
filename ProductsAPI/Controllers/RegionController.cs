@@ -15,8 +15,12 @@ namespace ProductsAPI.Controllers
 {
     public class RegionController : ApiController
     {
-        protected Repositories.RegionRepository Repository { get; private set; }
+        protected Repositories.IRegionRepository Repository { get; private set; }
 
+        public RegionController(Repositories.IRegionRepository repository)
+        {
+            this.Repository = repository;
+        }
 
         public RegionController()
         {

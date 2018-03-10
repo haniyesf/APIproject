@@ -8,13 +8,13 @@ using System.Web;
 
 namespace ProductsAPI.Repositories
 {
-    public class RegionRepository
+    public class RegionRepository : IRegionRepository
     {
-        private Models.AllContext db;
+        private AllContext db;
 
         public RegionRepository()
         {
-            db = new Models.AllContext();
+            db = new AllContext();
         }
 
         public async Task<IEnumerable<Region>> GetAll()

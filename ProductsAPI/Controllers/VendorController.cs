@@ -15,7 +15,12 @@ namespace ProductsAPI.Controllers
 {
     public class VendorController : ApiController
     {
-        protected Repositories.VendorRepository Repository { get; private set; }
+        protected Repositories.IVendorRepository Repository { get; private set; }
+
+        public VendorController(Repositories.IVendorRepository repository)
+        {
+            this.Repository = repository;
+        }
 
 
         public VendorController()
@@ -26,6 +31,7 @@ namespace ProductsAPI.Controllers
 
         [HttpGet]
         [Route("vendors")]
+        [Authorize(Roles = "Administrator")]
         public async Task<dynamic> GetVendor()
         {
             try
